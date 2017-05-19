@@ -349,12 +349,12 @@ ngOnInit() {
         {value: '4', label: 'Shoto'}
     ];
 
-    OPTIONS_BASIC_FIRST_TWO = [
+    OPTIONS_BASIC_FIRST_TWO: Array<IOption> = [
         {value: '0', label: 'Aech'},
         {value: '1', label: 'Art3mis'}
     ];
 
-    OPTIONS_BASIC_WITH_DISABLED = [
+    OPTIONS_BASIC_WITH_DISABLED: Array<IOption> = [
         {value: '0', label: 'Aech'},
         {value: '1', label: 'Art3mis'},
         {value: '2', label: 'Daito', disabled: true},
@@ -362,7 +362,7 @@ ngOnInit() {
         {value: '4', label: 'Shoto'}
     ];
 
-    OPTIONS_MANY = [
+    OPTIONS_MANY: Array<IOption> = [
         {label: 'Agrajag', value: '0'},
         {label: 'Mrs Alice Beeblebrox', value: '1'},
         {label: 'The Allitnils', value: '2'},
@@ -501,6 +501,18 @@ ngOnInit() {
         {label: 'Zarniwoop [Vann Harl]', value: '135'},
         {label: 'Zarquon', value: '136'},
         {label: 'Zem', value: '137'}
+    ];
+
+    OPTGROUPS: Array<IOption> = [
+      { label: 'Swedish Cars', value: 'sw', children: [
+        {label: 'Volvo', value: 'volvo'},
+        {label: 'Saab', value: 'saab'}
+      ]},
+      { label: 'German Cars', value: 'de', children: [
+          {label: 'Mercedes', value: 'mercedes'},
+          {label: 'Audi', value: 'audi'}
+        ]
+      }
     ];
 }
 

@@ -14,7 +14,7 @@ export class OptionList {
     private _highlightedOption: Option = null;
     private _hasShown: boolean;
 
-    constructor(options: Array<IOption>) {
+    constructor(options: Array<IOption>, isChild = false) {
 
         if (typeof options === 'undefined' || options === null) {
             options = [];
@@ -29,7 +29,11 @@ export class OptionList {
         });
 
         this._hasShown = this._options.length > 0;
-        this.highlight();
+
+        // Don't highlight every first sub-item
+        if (!isChild) {
+            this.highlight();
+        }
     }
 
     /** Options. **/
@@ -81,7 +85,7 @@ export class OptionList {
 
     clearSelection() {
         this.options.forEach((option) => {
-            option.selected = false;
+            option.clearSelection();
         });
     }
 
@@ -134,6 +138,7 @@ export class OptionList {
     highlight() {
         let option: Option = this.hasShownSelected() ?
             this.getFirstShownSelected() : this.getFirstShown();
+
         this.highlightOption(option);
     }
 
@@ -192,8 +197,21 @@ export class OptionList {
 
     hasSelected() {
         return this.options.some((option) => {
-            return option.selected;
+            return option.selected || option.hasSelected();
         });
+    }
+
+    getSelected(): Array<Option> {
+        const selected = this.options.filter(option => option.selected);
+
+        this.options.filter((option: Option) => option.hasSelected()).forEach(option => {
+           selected.push(...option.getSelected());
+        });
+
+
+        return selected;
+
+
     }
 
     hasShownSelected() {

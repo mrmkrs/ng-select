@@ -155,6 +155,14 @@ export class SelectDropdownComponent
         }
     }
 
+    hasChildren(option: Option): boolean {
+        return option.hasChildren();
+    }
+
+    getChildren(option: Option): Array<Option> {
+        return option.children.options;
+    }
+
     private handleOptionsWheel(e: any) {
         let div = this.optionsList.nativeElement;
         let atTop = div.scrollTop === 0;

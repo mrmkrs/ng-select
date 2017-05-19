@@ -16,13 +16,31 @@
         #optionsList>
         <ul
             (wheel)="onOptionsWheel($event)">
-            <li *ngFor="let option of optionList.filtered"
-                [ngClass]="{'highlighted': option.highlighted, 'selected': option.selected, 'disabled': option.disabled}"
-                [ngStyle]="getOptionStyle(option)"
-                (click)="onOptionClick(option)"
-                (mouseover)="onOptionMouseover(option)">
-                {{option.label}}
-            </li>
+            <ng-template ngFor let-option [ngForOf]="optionList.filtered">
+
+
+                    <ul *ngIf="hasChildren(option)">
+                        <li class="group" [ngClass]="option.value">{{ option.label }}</li>
+                        <li *ngFor="let childOption of getChildren(option)"
+                            [ngClass]="{'highlighted': childOption.highlighted, 'selected': childOption.selected, 'disabled': childOption.disabled}"
+                            [ngStyle]="getOptionStyle(childOption)"
+                            (click)="onOptionClick(childOption)"
+                            (mouseover)="onOptionMouseover(childOption)">
+                            {{childOption.label}} {{ childOption.selected | json }}
+                        </li>
+                    </ul>
+
+                    <li *ngIf="!hasChildren(option)"
+                        [ngClass]="{'highlighted': option.highlighted, 'selected': option.selected, 'disabled': option.disabled}"
+                        [ngStyle]="getOptionStyle(option)"
+                        (click)="onOptionClick(option)"
+                        (mouseover)="onOptionMouseover(option)">
+                        {{option.label}}
+                    </li>
+
+            </ng-template>
+
+
             <li
                 *ngIf="!optionList.hasShown"
                 class="message">
@@ -31,3 +49,4 @@
         </ul>
     </div>
 </div>
+

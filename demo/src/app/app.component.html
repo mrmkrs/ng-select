@@ -429,6 +429,25 @@
             <p>Not yet supported.</p>
         </md-card-content>
     </md-card>
+
+  <h1 id="optgroups">Optgroups</h1>
+
+  <md-card>
+    <md-card-title>
+      Optgroups
+    </md-card-title>
+    <md-card-content>
+      <ng-select
+        [options]="OPTGROUPS"
+        [multiple]="false"
+        [noFilter]="10">
+      </ng-select>
+      <p>The same as for the single select example above.</p>
+      <section [innerHTML]="sample15html" highlight-js-content=".highlight"></section>
+    </md-card-content>
+  </md-card>
+
+
     <!--md-card>
         <md-card-title>
             Open/close dropdown
