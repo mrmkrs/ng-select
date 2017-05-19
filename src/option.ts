@@ -45,10 +45,23 @@ export class Option {
         return this.children.getSelected();
     }
 
-    clearSelection(): void {
-        this.selected = false;
+    clearSelection(): Array<Option> {
+        const deselected = [];
+        if (this.selected) {
+            this.selected = false;
+            deselected.push(this);
+        }
         if (this.hasChildren()) {
-            this.children.clearSelection();
+            deselected.concat(this.children.clearSelection());
+        }
+        return deselected;
+    }
+
+    setSelected(v: Array<string>) {
+        this.selected = v.indexOf(this.value) > -1;
+
+        if (this.hasChildren()) {
+            this.children.value = v;
         }
     }
 }

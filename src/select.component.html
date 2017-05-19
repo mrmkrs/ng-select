@@ -23,7 +23,7 @@
             {{placeholderView}}
         </div>
         <div class="clear"
-            *ngIf="allowClear && hasSelected"
+            *ngIf="allowClear && optionList.hasSelected()"
             (click)="onClearSelectionClick($event)">
             &#x2715;
         </div>

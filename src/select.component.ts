@@ -266,6 +266,7 @@ export class SelectComponent implements ControlValueAccessor, OnChanges, OnInit 
 
         if (!firstTime) {
             v = this.optionList.value;
+
         }
 
         this.optionList = new OptionList(this.options);
@@ -335,16 +336,15 @@ export class SelectComponent implements ControlValueAccessor, OnChanges, OnInit 
     }
 
     private clearSelection() {
-        let selection: Array<Option> = this.optionList.selection;
-        if (selection.length > 0) {
-            this.optionList.clearSelection();
+        if (this.optionList.hasSelected()) {
+            let deselected = this.optionList.clearSelection();
             this.valueChanged();
 
-            if (selection.length === 1) {
-                this.deselected.emit(selection[0].wrappedOption);
+            if (deselected.length === 1) {
+                this.deselected.emit(deselected[0].wrappedOption);
             }
             else {
-                this.deselected.emit(selection.map((option) => {
+                this.deselected.emit(deselected.map((option) => {
                     return option.wrappedOption;
                 }));
             }

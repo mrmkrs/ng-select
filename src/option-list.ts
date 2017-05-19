@@ -51,16 +51,14 @@ export class OptionList {
     /** Value. **/
 
     get value(): Array<string> {
-        return this.selection.map((selectedOption) => {
-            return selectedOption.value;
-        });
+        return this.getSelected().map(option => option.value);
     }
 
     set value(v: Array<string>) {
         v = typeof v === 'undefined' || v === null ? [] : v;
 
         this.options.forEach((option) => {
-            option.selected = v.indexOf(option.value) > -1;
+            option.setSelected(v);
         });
     }
 
@@ -83,10 +81,12 @@ export class OptionList {
         option.selected = false;
     }
 
-    clearSelection() {
+    clearSelection(): Array<Option> {
+        const deselected = [];
         this.options.forEach((option) => {
-            option.clearSelection();
+            deselected.concat(option.clearSelection());
         });
+        return deselected;
     }
 
     /** Filter. **/
