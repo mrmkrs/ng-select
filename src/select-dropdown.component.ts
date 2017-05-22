@@ -163,6 +163,10 @@ export class SelectDropdownComponent
         return option.children.options;
     }
 
+    getFilteredChildren(option: Option): Array<Option> {
+        return option.children.filtered;
+    }
+
     private handleOptionsWheel(e: any) {
         let div = this.optionsList.nativeElement;
         let atTop = div.scrollTop === 0;

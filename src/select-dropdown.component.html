@@ -21,7 +21,7 @@
 
                     <ul *ngIf="hasChildren(option)">
                         <li class="group" [ngClass]="option.value">{{ option.label }}</li>
-                        <li *ngFor="let childOption of getChildren(option)"
+                        <li *ngFor="let childOption of getFilteredChildren(option)"
                             [ngClass]="{'highlighted': childOption.highlighted, 'selected': childOption.selected, 'disabled': childOption.disabled}"
                             [ngStyle]="getOptionStyle(childOption)"
                             (click)="onOptionClick(childOption)"

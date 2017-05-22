@@ -1,6 +1,7 @@
 import {Option} from './option';
 import {IOption} from './option.interface';
 import {Diacritics} from './diacritics';
+import {isNullOrUndefined} from 'util';
 
 export class OptionList {
 
@@ -13,8 +14,10 @@ export class OptionList {
 
     private _highlightedOption: Option = null;
     private _hasShown: boolean;
+    public isChild = false;
 
     constructor(options: Array<IOption>, isChild = false) {
+        this.isChild = isChild;
 
         if (typeof options === 'undefined' || options === null) {
             options = [];
@@ -31,7 +34,7 @@ export class OptionList {
         this._hasShown = this._options.length > 0;
 
         // Don't highlight every first sub-item
-        if (!isChild) {
+        if (!this.isChild) {
             this.highlight();
         }
     }
@@ -97,24 +100,56 @@ export class OptionList {
         });
     }
 
-    filter(term: string): boolean {
+    filter(search: string): boolean {
         let anyShown: boolean = false;
 
-        if (term.trim() === '') {
+        if (search.trim() === '') {
             this.resetFilter();
             anyShown = this.options.length > 0;
-        }
-        else {
-            this.options.forEach((option) => {
-                let l: string = Diacritics.strip(option.label).toUpperCase();
-                let t: string = Diacritics.strip(term).toUpperCase();
-                option.shown = l.indexOf(t) > -1;
+        } else {
 
-                if (option.shown) {
-                    anyShown = true;
+            // filter on multiple terms
+            const terms = search.split(' ').filter(term => term.length > 0);
+
+            this.options.forEach((option) => {
+                option.shown = false;
+                if (option.hasChildren()) {
+                    const childShown = option.children.filter(search);
+                    if (childShown) {
+                        anyShown = true;
+                    }
                 }
+
+                let l: string = Diacritics.strip(option.label).toUpperCase();
+                let result = terms.every(term => {
+                    let t: string = Diacritics.strip(term).toUpperCase();
+                    if ( l.indexOf(t) > -1 ) {
+                        return true;
+                    }
+                });
+
+                if (result) {
+                    option.shown = true;
+                    anyShown = true;
+                };
             });
 
+            this.options.forEach((option) => {
+                if (option.hasChildren()) {
+
+                    // if the parent has a search hit, show all the children
+                    if (option.shown) {
+                        option.children.resetFilter();
+                    } else {
+
+                        // if a child has a search hit, show the parent
+                        const hasFilterResult = option.children.options.some(option => option.shown);
+                        if (hasFilterResult) {
+                            option.shown = true;
+                        }
+                    }
+                }
+            });
         }
 
         this.highlight();
@@ -126,6 +161,9 @@ export class OptionList {
     private resetFilter() {
         this.options.forEach((option) => {
             option.shown = true;
+            if (option.hasChildren()) {
+                option.children.resetFilter();
+            }
         });
     }
 
@@ -138,6 +176,10 @@ export class OptionList {
     highlight() {
         let option: Option = this.hasShownSelected() ?
             this.getFirstShownSelected() : this.getFirstShown();
+
+        if (!isNullOrUndefined(option) && option.hasChildren()) {
+            option = option.children.options[0];
+        }
 
         this.highlightOption(option);
     }
