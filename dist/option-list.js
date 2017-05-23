@@ -1,0 +1,263 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var option_1 = require("./option");
+var diacritics_1 = require("./diacritics");
+var util_1 = require("util");
+var OptionList = (function () {
+    function OptionList(options, isChild) {
+        if (isChild === void 0) { isChild = false; }
+        /* Consider using these for performance improvement. */
+        // private _selection: Array<Option>;
+        // private _filtered: Array<Option>;
+        // private _value: Array<string>;
+        this._highlightedOption = null;
+        this.isChild = false;
+        this.isChild = isChild;
+        if (typeof options === 'undefined' || options === null) {
+            options = [];
+        }
+        this._options = options.map(function (option) {
+            var o = new option_1.Option(option);
+            if (option.disabled) {
+                o.disabled = true;
+            }
+            return o;
+        });
+        this._hasShown = this._options.length > 0;
+        // Don't highlight every first sub-item
+        if (!this.isChild) {
+            this.highlight();
+        }
+    }
+    Object.defineProperty(OptionList.prototype, "options", {
+        /** Options. **/
+        get: function () {
+            return this._options;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    OptionList.prototype.getOptionsByValue = function (value) {
+        return this.options.filter(function (option) {
+            return option.value === value;
+        });
+    };
+    Object.defineProperty(OptionList.prototype, "value", {
+        /** Value. **/
+        get: function () {
+            return this.getSelected().map(function (option) { return option.value; });
+        },
+        set: function (v) {
+            v = typeof v === 'undefined' || v === null ? [] : v;
+            this.options.forEach(function (option) {
+                option.setSelected(v);
+            });
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(OptionList.prototype, "selection", {
+        /** Selection. **/
+        get: function () {
+            return this.options.filter(function (option) {
+                return option.selected;
+            });
+        },
+        enumerable: true,
+        configurable: true
+    });
+    OptionList.prototype.select = function (option, multiple) {
+        if (!multiple) {
+            this.clearSelection();
+        }
+        option.selected = true;
+    };
+    OptionList.prototype.deselect = function (option) {
+        option.selected = false;
+    };
+    OptionList.prototype.clearSelection = function () {
+        var deselected = [];
+        this.options.forEach(function (option) {
+            deselected.concat(option.clearSelection());
+        });
+        return deselected;
+    };
+    Object.defineProperty(OptionList.prototype, "filtered", {
+        /** Filter. **/
+        get: function () {
+            return this.options.filter(function (option) {
+                return option.shown;
+            });
+        },
+        enumerable: true,
+        configurable: true
+    });
+    OptionList.prototype.filter = function (search) {
+        var anyShown = false;
+        if (search.trim() === '') {
+            this.resetFilter();
+            anyShown = this.options.length > 0;
+        }
+        else {
+            // filter on multiple terms
+            var terms_1 = search.split(' ').filter(function (term) { return term.length > 0; });
+            this.options.forEach(function (option) {
+                option.shown = false;
+                if (option.hasChildren()) {
+                    var childShown = option.children.filter(search);
+                    if (childShown) {
+                        anyShown = true;
+                    }
+                }
+                var l = diacritics_1.Diacritics.strip(option.label).toUpperCase();
+                var result = terms_1.every(function (term) {
+                    var t = diacritics_1.Diacritics.strip(term).toUpperCase();
+                    if (l.indexOf(t) > -1) {
+                        return true;
+                    }
+                });
+                if (result) {
+                    option.shown = true;
+                    anyShown = true;
+                }
+                ;
+            });
+            this.options.forEach(function (option) {
+                if (option.hasChildren()) {
+                    // if the parent has a search hit, show all the children
+                    if (option.shown) {
+                        option.children.resetFilter();
+                    }
+                    else {
+                        // if a child has a search hit, show the parent
+                        var hasFilterResult = option.children.options.some(function (option) { return option.shown; });
+                        if (hasFilterResult) {
+                            option.shown = true;
+                        }
+                    }
+                }
+            });
+        }
+        this.highlight();
+        this._hasShown = anyShown;
+        return anyShown;
+    };
+    OptionList.prototype.resetFilter = function () {
+        this.options.forEach(function (option) {
+            option.shown = true;
+            if (option.hasChildren()) {
+                option.children.resetFilter();
+            }
+        });
+    };
+    Object.defineProperty(OptionList.prototype, "highlightedOption", {
+        /** Highlight. **/
+        get: function () {
+            return this._highlightedOption;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    OptionList.prototype.highlight = function () {
+        var option = this.hasShownSelected() ?
+            this.getFirstShownSelected() : this.getFirstShown();
+        if (!util_1.isNullOrUndefined(option) && option.hasChildren()) {
+            option = option.children.options[0];
+        }
+        this.highlightOption(option);
+    };
+    OptionList.prototype.highlightOption = function (option) {
+        this.clearHighlightedOption();
+        if (option !== null) {
+            option.highlighted = true;
+            this._highlightedOption = option;
+        }
+    };
+    OptionList.prototype.highlightNextOption = function () {
+        var shownOptions = this.filtered;
+        var index = this.getHighlightedIndexFromList(shownOptions);
+        if (index > -1 && index < shownOptions.length - 1) {
+            this.highlightOption(shownOptions[index + 1]);
+        }
+    };
+    OptionList.prototype.highlightPreviousOption = function () {
+        var shownOptions = this.filtered;
+        var index = this.getHighlightedIndexFromList(shownOptions);
+        if (index > 0) {
+            this.highlightOption(shownOptions[index - 1]);
+        }
+    };
+    OptionList.prototype.clearHighlightedOption = function () {
+        if (this.highlightedOption !== null) {
+            this.highlightedOption.highlighted = false;
+            this._highlightedOption = null;
+        }
+    };
+    OptionList.prototype.getHighlightedIndexFromList = function (options) {
+        for (var i = 0; i < options.length; i++) {
+            if (options[i].highlighted) {
+                return i;
+            }
+        }
+        return -1;
+    };
+    OptionList.prototype.getHighlightedIndex = function () {
+        return this.getHighlightedIndexFromList(this.filtered);
+    };
+    Object.defineProperty(OptionList.prototype, "hasShown", {
+        /** Util. **/
+        get: function () {
+            return this._hasShown;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    OptionList.prototype.hasSelected = function () {
+        return this.options.some(function (option) {
+            return option.selected || option.hasSelected();
+        });
+    };
+    OptionList.prototype.getSelected = function () {
+        var selected = this.options.filter(function (option) { return option.selected; });
+        this.options.filter(function (option) { return option.hasSelected(); }).forEach(function (option) {
+            selected.push.apply(selected, option.getSelected());
+        });
+        return selected;
+    };
+    OptionList.prototype.hasShownSelected = function () {
+        return this.options.some(function (option) {
+            return option.shown && option.selected;
+        });
+    };
+    OptionList.prototype.getFirstShown = function () {
+        for (var _i = 0, _a = this.options; _i < _a.length; _i++) {
+            var option = _a[_i];
+            if (option.shown) {
+                return option;
+            }
+        }
+        return null;
+    };
+    OptionList.prototype.getFirstShownSelected = function () {
+        for (var _i = 0, _a = this.options; _i < _a.length; _i++) {
+            var option = _a[_i];
+            if (option.shown && option.selected) {
+                return option;
+            }
+        }
+        return null;
+    };
+    // v0 and v1 are assumed not to be undefined or null.
+    OptionList.equalValues = function (v0, v1) {
+        if (v0.length !== v1.length) {
+            return false;
+        }
+        var a = v0.slice().sort();
+        var b = v1.slice().sort();
+        return a.every(function (v, i) {
+            return v === b[i];
+        });
+    };
+    return OptionList;
+}());
+exports.OptionList = OptionList;
