@@ -1,5 +1,99 @@
 # Changelog
 
+<a name="1.0.2"></a>
+## [1.0.2](https://github.com/basvandenberg/ng-select/compare/1.0.1...1.0.2) (2019-..-..)
+
+
+
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/basvandenberg/ng-select/compare/1.0.0...1.0.1) (2018-11-11)
+
+### Features
+- Changed peer dependencies to include Angular 7 (#312).
+- Upgrade dependencies.
+
+
+
+<a name="1.0.0"></a>
+## [1.0.0](https://github.com/basvandenberg/ng-select/compare/1.0.0-rc.5...1.0.0) (2018-06-27)
+
+### Features
+- Upgrade to Angular 6.
+- Upgrade other dependencies.
+
+
+
+<a name="1.0.0-rc.5"></a>
+## [1.0.0-rc.5](https://github.com/basvandenberg/ng-select/compare/1.0.0-rc.4...1.0.0-rc.5) (2018-03-10)
+
+### Bug fixes
+- Prevent console error when removing select option from multi-select (#289).
+- Bug-fix and style-fix for drop-up functionality (#286).
+
+
+
+<a name="1.0.0-rc.4"></a>
+## [1.0.0-rc.4](https://github.com/basvandenberg/ng-select/compare/1.0.0-rc.3...1.0.0-rc.4) (2018-03-02)
+
+### Features
+- Add filterInputChanged output event (#258).
+- Drop up at page bottem (#257, #266).
+
+
+
+<a name="1.0.0-rc.3"></a>
+## [1.0.0-rc.3](https://github.com/basvandenberg/ng-select/compare/1.0.0-rc.2...1.0.0-rc.3) (2017-11-02)
+
+Changed build process from Gulp to angular-cli and ng-packagr.
+
+
+
+<a name="1.0.0-rc.2"></a>
+## [1.0.0-rc.2](https://github.com/basvandenberg/ng-select/compare/1.0.0-rc.1...1.0.0-rc.2) (2017-11-02)
+
+
+
+<a name="1.0.0-rc.1"></a>
+## [1.0.0-rc.1](https://github.com/basvandenberg/ng-select/compare/1.0.0-beta.6...1.0.0-rc.1) (2017-11-02)
+
+Works with Angular 5.
+
+### Breaking changes
+- Removed font-family: Sans-Serif from style sheets (#241).
+
+### Bug fixes
+- Use original option object in option template of selected option (#92).
+- Prevent changed-after-checked error when using a placeholder (#208).
+- Remove deprecated ngOutletContext (#242).
+- Hide placeholder in multi-select when setting delayed options (#249).
+
+
+<a name="1.0.0-beta.6"></a>
+## [1.0.0-beta.6](https://github.com/basvandenberg/ng-select/compare/1.0.0-beta.5...1.0.0-beta.6) (2017-07-05)
+
+### Features
+- New ng-select web site.
+- Blur and focus output events (#170).
+- Option template for customizing option layout/styling (#92).
+
+### Bug fixes
+- Stop clearing the (single select) filter input in the drop down (#162).
+- Enable/disable filter (based on noFilter) if list of options changes (#146).
+- Skip disabled options when navigating option list with up/down keys (#182).
+- Set value, also if there is no option with this value present yet, this
+  prevents having to use setTimeout when setting a value directly after
+  setting/updating options (#169, #130).
+- Call the onChange only for user (de)select actions (#176).
+- Fix missing placeholder (multiple select) if filter is hidden (#110).
+- Prevent drop down to close when clicking disabled option (#156).
+- Update filter input width when closing drop down (#198).
+- Show pointer instead of text cursor when hovering placeholder in multiple 
+  select (#199).
+- Added change detection for placeholder property (#192).
+- Fixed placeholder initially not visible in multi select (#193).
+
+
+
 <a name="1.0.0-beta.5"></a>
 ## [1.0.0-beta.5](https://github.com/basvandenberg/ng-select/compare/1.0.0-beta.4...1.0.0-beta.5) (2017-03-29)
 
@@ -146,7 +240,7 @@ Fixes for use with angular4.
 
 ### Improvements
 
-- Set ViewEncapsulation to None to enable style override ([#16] (https://github.com/basvandenberg/ng-select/issues/16)). 
+- Set ViewEncapsulation to None to enable style override ([#16] (https://github.com/basvandenberg/ng-select/issues/16)).
 
 
 
@@ -175,4 +269,3 @@ Fixes for use with angular4.
 - Update current selection when option list is changed ([#6] (https://github.com/basvandenberg/ng-select/issues/6)).
 - Prevent javascript error when list of options is empty ([#7] (https://github.com/basvandenberg/ng-select/issues/7)).
 - Prevent javascript error when clicking the 'No results found' option ([#8] (https://github.com/basvandenberg/ng-select/issues/8)).
-
